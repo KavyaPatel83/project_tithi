@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile | Health Monitor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: #1e2a3e;
+    color: #e2e8f0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    transition: all 0.3s;
+    z-index: 100;
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 28px 20px;
+    text-align: center;
+    border-bottom: 1px solid #334155;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0 16px;
+}
+
+.sidebar ul li {
+    margin: 6px 0;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.sidebar ul li a i {
+    width: 24px;
+    font-size: 1.2rem;
+}
+
+.sidebar ul li:hover a {
+    background: #334155;
+    color: white;
+}
+
+.sidebar ul li.active a {
+    background: #0284c7;
+    color: white;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 24px 32px;
+}
+
+/* Header */
+.page-header {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.page-header h1 {
+    font-size: 1.8rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header p {
+    color: #64748b;
+    margin-top: 8px;
+}
+
+/* Profile Container */
+.profile-container {
+    background: white;
+    border-radius: 28px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    padding-bottom: 28px;
+    border-bottom: 2px solid #eef2f8;
+    margin-bottom: 28px;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #0284c7, #0f172a);
+    border-radius: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.profile-title h2 {
+    font-size: 1.8rem;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.profile-title .member-since {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+/* Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.info-card {
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+.info-card h3 {
+    font-size: 1rem;
+    color: #475569;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #334155;
+}
+
+.info-value {
+    color: #0f172a;
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.btn-edit, .btn-back {
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-edit {
+    background: #0284c7;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #0369a1;
+    transform: translateY(-2px);
+}
+
+.btn-back {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.btn-back:hover {
+    background: #cbd5e1;
+}
+
+/* No Data Message */
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fef3c7;
+    border-radius: 20px;
+}
+
+.no-data i {
+    font-size: 3rem;
+    color: #b45309;
+    margin-bottom: 16px;
+}
+
+.no-data h3 {
+    color: #92400e;
+    margin-bottom: 12px;
+}
+
+.no-data a {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 10px 24px;
+    background: #0284c7;
+    color: white;
+    text-decoration: none;
+    border-radius: 40px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+    }
+    .sidebar h2 span, .sidebar ul li a span {
+        display: none;
+    }
+    .sidebar h2 {
+        padding: 20px 0;
+    }
+    .sidebar ul li a {
+        justify-content: center;
+        padding: 14px 0;
+    }
+    .sidebar ul li a i {
+        margin: 0;
+        font-size: 1.4rem;
+    }
+    .main-content {
+        margin-left: 80px;
+        padding: 16px;
+    }
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 12px;
+    }
+    .profile-container {
+        padding: 20px;
+    }
+    .avatar {
+        width: 90px;
+        height: 90px;
+        font-size: 2.2rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>
+            <i class="fas fa-heartbeat"></i>
+            <span>Vitalis</span>
+        </h2>
+        <ul>
+            <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+            <li><a href="healthlogs.html"><i class="fas fa-notes-medical"></i><span>Health Logs</span></a></li>
+            <li><a href="reports.html"><i class="fas fa-chart-line"></i><span>Reports</span></a></li>
+            <li class="active"><a href="profile.html"><i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+            <li><a href="settings.html"><i class="fas fa-sliders-h"></i><span>Settings</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-user-circle" style="color: #0284c7;"></i>
+                My Profile
+            </h1>
+            <p>View and manage your personal health information</p>
+        </div>
+
+        <div class="profile-container" id="profileContainer">
+            <!-- Dynamic content will be loaded here -->
+            <div class="loading" style="text-align: center; padding: 40px;">
+                <i class="fas fa-spinner fa-pulse fa-2x"></i>
+                <p>Loading profile data...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to load and display user data from localStorage
+    function loadProfileData() {
+        const container = document.getElementById('profileContainer');
+        
+        // Get user data from localStorage (saved by registration.html)
+        const userDataStr = localStorage.getItem('healthUser');
+        
+        if (!userDataStr) {
+            // No registration found - show message and link to register
+            container.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-user-slash"></i>
+                    <h3>No Profile Found</h3>
+                    <p>You haven't registered yet. Please complete registration to view your profile.</p>
+                    <a href="registration.html">Go to Registration</a>
+                </div>
+            `;
+            return;
+        }
+        
+        try {
+            const user = JSON.parse(userDataStr);
+            
+            // Get initials for avatar
+            const initials = (user.firstName?.charAt(0) || '') + (user.lastName?.charAt(0) || '');
+            
+            // Format date of birth
+            const formattedDob = user.dob ? new Date(user.dob).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : 'Not provided';
+            
+            // Build profile HTML
+            container.innerHTML = `
+                <div class="profile-header">
+                    <div class="avatar">
+                        ${initials || '<i class="fas fa-user"></i>'}
+                    </div>
+                    <div class="profile-title">
+                        <h2>${user.firstName || ''} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName || ''}</h2>
+                        <p class="member-since"><i class="fas fa-calendar-alt"></i> Member since: ${user.registrationDate || 'Today'}</p>
+                    </div>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3><i class="fas fa-id-card"></i> Personal Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value">${user.firstName || ''} ${user.middleName || ''} ${user.lastName || ''}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Date of Birth</span>
+                            <span class="info-value">${formattedDob}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Age</span>
+                            <span class="info-value">${user.age || 'Not provided'} years</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Gender</span>
+                            <span class="info-value">${user.gender || 'Not provided'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Blood Group</span>
+                            <span class="info-value">${user.bloodGroup || 'Not provided'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-address-card"></i> Contact Information</h3>
+                        <div class="info-row">
+                            <span class="info-label">Email Address</span>
+                            <span class="info-value">${user.email || 'Not provided'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone Number</span>
+                            <span class="info-value">${user.phone || 'Not provided'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-chart-heart"></i> Health Summary</h3>
+                        <div class="info-row">
+                            <span class="info-label">Health ID</span>
+                            <span class="info-value">#${(user.email?.substring(0, 8) || 'HEALTH').toUpperCase()}${Math.floor(Math.random() * 1000)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Status</span>
+                            <span class="info-value"><span style="color: #10b981;">✓ Active</span></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Last Login</span>
+                            <span class="info-value">${new Date().toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-edit" onclick="editProfile()">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                    <a href="dashboard.html" class="btn-back">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error parsing user data:', error);
+            container.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Profile</h3>
+                    <p>There was an issue loading your profile data. Please try registering again.</p>
+                    <a href="registration.html">Go to Registration</a>
+                </div>
+            `;
+        }
+    }
+    
+    // Edit profile function - redirect to registration to re-enter data
+    function editProfile() {
+        if (confirm('You will be redirected to update your profile information. Continue?')) {
+            window.location.href = 'registration.html';
+        }
+    }
+    
+    // Load profile when page loads
+    document.addEventListener('DOMContentLoaded', loadProfileData);
+</script>
+
+</body>
+</html>

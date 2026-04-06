@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Health Monitoring System</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body, html {
+        height: 100%;
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #4dd0e1, #007bff);
+        overflow-x: hidden;
+        position: relative;
+    }
+    /* Background floating circles */
+    .circle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        animation: float 20s infinite linear;
+    }
+    @keyframes float {
+        0% { transform: translateY(0) translateX(0); }
+        50% { transform: translateY(-100px) translateX(50px); }
+        100% { transform: translateY(0) translateX(0); }
+    }
+    .circle:nth-child(1) { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
+    .circle:nth-child(2) { width: 300px; height: 300px; top: 40%; left: 70%; animation-duration: 30s; }
+    .circle:nth-child(3) { width: 150px; height: 150px; top: 70%; left: 20%; animation-duration: 20s; }
+
+    /* Header */
+    header {
+        text-align: center;
+        padding: 20px;
+        font-size: 20px;
+        color: white;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    /* Main content */
+    .main-content {
+        max-width: 1000px;
+        margin: 40px auto;
+        background: rgba(255,255,255,0.95);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px);}
+        100% { opacity: 1; transform: translateY(0);}
+    }
+
+    .article {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    .article h2 {
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    /* Button */
+    .middle-btn {
+        display: block;
+        margin: 20px auto;
+        padding: 15px 35px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .middle-btn:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Logos/icons */
+    .icons {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .icon-card {
+        width: 120px;
+        height: 120px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        margin: 15px;
+        animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+</style>
+</head>
+<body>
+
+<!-- Floating Background Circles -->
+<div class="circle"></div>
+<div class="circle"></div>
+<div class="circle"></div>
+
+
+
+<div class="main-content">
+
+    <!-- Health Icons -->
+    <div class="icons">
+        <div class="icon-card">❤️</div>
+        <div class="icon-card">🩺</div>
+        <div class="icon-card">💊</div>
+        <div class="icon-card">🧬</div>
+        <div class="icon-card">🏥</div>
+    </div>
+
+    <!-- Big Article -->
+    <div class="article">
+        <h2>Health Monitoring System</h2>
+        <p>Monitoring health has never been more important in today’s fast-paced world. A reliable health monitoring system can help track vital signs, detect anomalies early, and maintain overall well-being. Modern technologies now allow seamless integration of devices to collect real-time data for better healthcare management.</p>
+
+        <p>With wearable devices, patients can monitor heart rate, blood pressure, oxygen levels, and sleep patterns. The data is then synchronized with mobile apps or cloud platforms for easy access. This ensures both patients and doctors stay informed about the patient’s health status.</p>
+
+        <p>Health monitoring systems also play a critical role in chronic disease management. For conditions like diabetes, hypertension, and cardiovascular diseases, continuous monitoring helps prevent complications and improve quality of life. Alerts and reminders are generated to ensure timely medication and checkups.</p>
+
+        <p>Artificial intelligence and machine learning have enhanced the predictive capabilities of health monitoring systems. By analyzing trends and patterns in collected data, these systems can forecast potential health risks and suggest preventive measures. Early detection can save lives and reduce medical costs significantly.</p>
+
+        <p>Moreover, integration with telemedicine platforms allows patients to consult healthcare professionals remotely. Real-time data sharing empowers doctors to make informed decisions, and patients can receive timely interventions without visiting hospitals frequently.</p>
+
+        <p>In conclusion, health monitoring systems combine technology, healthcare, and user convenience to provide comprehensive health management. They are indispensable in promoting wellness, preventing diseases, and enhancing the overall healthcare experience in today’s digital age.</p>
+    </div>
+
+    <!-- Middle Button -->
+    <button class="middle-btn" id="startBtn">Start Monitoring</button>
+
+</div>
+
+<!-- JavaScript to open dashboard.html -->
+<script>
+    document.getElementById("startBtn").addEventListener("click", function() {
+        window.location.href = "dashboard.html"; // Opens in the same tab
+        // Use the next line instead if you want it to open in a new tab:
+        // window.open("dashboard.html", "_blank");
+    });
+</script>
+
+</body>
+</html>

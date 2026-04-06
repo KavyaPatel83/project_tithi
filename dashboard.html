@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Vitalis | Smart Health Dashboard</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f0f4f8;
+            display: flex;
+            min-height: 100vh;
+            transition: all 0.2s ease;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(145deg, #0b2b3b 0%, #1a3a4b 100%);
+            color: #eef4ff;
+            backdrop-filter: blur(2px);
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.7rem;
+            letter-spacing: -0.3px;
+            padding: 32px 0 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 24px;
+        }
+
+        .sidebar h2 i {
+            margin-right: 10px;
+            font-size: 1.6rem;
+            color: #6bc2e8;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0 20px;
+        }
+
+        .sidebar ul li {
+            margin: 8px 0;
+            border-radius: 32px;
+            transition: all 0.2s;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: #e2edf2;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: 0.2s;
+        }
+
+        .sidebar ul li a i {
+            width: 24px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .sidebar ul li:hover {
+            background: rgba(107, 194, 232, 0.2);
+            transform: translateX(4px);
+        }
+
+        .sidebar ul li.active {
+            background: rgba(107, 194, 232, 0.3);
+        }
+
+        /* Main area */
+        .main-content {
+            flex: 1;
+            padding: 28px 32px;
+            overflow-x: hidden;
+            background: #f0f4f8;
+        }
+
+        /* header */
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            background: white;
+            padding: 16px 28px;
+            border-radius: 32px;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
+        }
+
+        header h1 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1e3c4c, #2b5f7a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .notifications {
+            background: #fff1e6;
+            padding: 8px 20px;
+            border-radius: 48px;
+            font-weight: 600;
+            color: #c25b2c;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notifications:hover {
+            background: #ffedd5;
+            transform: scale(1.02);
+        }
+
+        .notifications i {
+            margin-right: 8px;
+        }
+
+        /* metrics grid */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 22px;
+            margin: 28px 0 32px;
+        }
+
+        .card {
+            background: white;
+            padding: 18px 12px;
+            border-radius: 32px;
+            box-shadow: 0 12px 22px -8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.25s;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c5f7a;
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .card p {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #1f2e3a;
+            margin: 0;
+        }
+
+        /* charts section */
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin: 20px 0 32px;
+        }
+
+        .chart-container {
+            flex: 1 1 300px;
+            background: white;
+            padding: 22px 18px;
+            border-radius: 36px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #204b5e;
+            border-left: 5px solid #3e92b0;
+            padding-left: 15px;
+        }
+
+        canvas {
+            max-height: 280px;
+            width: 100%;
+        }
+
+        /* shared sections */
+        .alerts, .history, .tips {
+            background: white;
+            padding: 24px 28px;
+            border-radius: 32px;
+            margin-top: 32px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+        }
+
+        .alerts h3, .history h3, .tips h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1d495f;
+        }
+
+        .alerts ul {
+            list-style: none;
+        }
+
+        .alerts li {
+            background: #fff5ef;
+            margin: 12px 0;
+            padding: 12px 20px;
+            border-radius: 40px;
+            border-left: 6px solid #e67e22;
+            font-weight: 500;
+        }
+
+        /* table responsive */
+        .history table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        th {
+            background-color: #e9f2f5;
+            color: #155f74;
+            font-weight: 700;
+            padding: 14px 8px;
+        }
+
+        td, th {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .tips ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        .tips ul li {
+            background: #eef3fc;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #1e5a72;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tips ul li i {
+            color: #2c8faa;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            margin-top: 30px;
+            padding: 10px 18px;
+            background: rgba(220, 38, 38, 0.2);
+            border-radius: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn a {
+            color: #f87171;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 38, 38, 0.3);
+        }
+
+        /* responsive adjustments */
+        @media (max-width: 850px) {
+            .sidebar {
+                width: 90px;
+                padding: 0 6px;
+            }
+            .sidebar h2 {
+                font-size: 1rem;
+                padding: 20px 0;
+            }
+            .sidebar h2 i {
+                margin-right: 0;
+                font-size: 1.6rem;
+            }
+            .sidebar h2 span {
+                display: none;
+            }
+            .sidebar ul li a span {
+                display: none;
+            }
+            .sidebar ul li a i {
+                margin: 0 auto;
+                font-size: 1.5rem;
+            }
+            .sidebar ul li a {
+                justify-content: center;
+                padding: 14px 0;
+            }
+            .main-content {
+                padding: 18px;
+            }
+            header h1 {
+                font-size: 1.3rem;
+            }
+            .card p {
+                font-size: 1.5rem;
+            }
+            .logout-btn span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+            .charts {
+                flex-direction: column;
+            }
+            .chart-container {
+                width: 100%;
+            }
+            .tips ul {
+                flex-direction: column;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .notifications {
+                align-self: flex-start;
+            }
+            th, td {
+                font-size: 0.8rem;
+                padding: 8px 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .metrics {
+                grid-template-columns: 1fr 1fr;
+            }
+            .main-content {
+                padding: 16px;
+            }
+            .card {
+                padding: 12px 6px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8eb7c9;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>
+        <i class="fas fa-heartbeat"></i>
+        <span>Health Monitor</span>
+    </h2>
+    <ul>
+        <li class="active"><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+        <li><a href="healthlogs.html"><i class="fas fa-notes-medical"></i><span>Health Logs</span></a></li>
+        <li><a href="reports.html"><i class="fas fa-chart-line"></i><span>Reports</span></a></li>
+        <li><a href="profile.html"><i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+        <li><a href="settings.html"><i class="fas fa-sliders-h"></i><span>Settings</span></a></li>
+    </ul>
+    <div class="logout-btn">
+        <a href="registration.html" onclick="localStorage.removeItem('healthUser')">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="main-content">
+    <header>
+        <h1 id="greeting"><i class="fas fa-waveform" style="color:#2c8faa; margin-right: 12px;"></i> Welcome, Guest</h1>
+        <div class="notifications" onclick="document.querySelector('.alerts').scrollIntoView({behavior:'smooth'})">
+            <i class="fas fa-bell"></i> <span id="alertCount">2</span> Alerts
+        </div>
+    </header>
+
+    <!-- Metric cards -->
+    <section class="metrics">
+        <div class="card"><h3><i class="fas fa-heart"></i> Heart Rate</h3><p>78 <span style="font-size:1rem;">BPM</span></p></div>
+        <div class="card"><h3><i class="fas fa-tachometer-alt"></i> Blood Pressure</h3><p>120/80 <span style="font-size:0.9rem;">mmHg</span></p></div>
+        <div class="card"><h3><i class="fas fa-tint"></i> Blood Sugar</h3><p>95 <span style="font-size:1rem;">mg/dL</span></p></div>
+        <div class="card"><h3><i class="fas fa-lungs"></i> Oxygen</h3><p>98%</p></div>
+        <div class="card"><h3><i class="fas fa-thermometer-half"></i> Body Temp</h3><p>36.8°C</p></div>
+        <div class="card"><h3><i class="fas fa-weight-scale"></i> BMI</h3><p>22.5</p></div>
+    </section>
+
+    <!-- Charts -->
+    <section class="charts">
+        <div class="chart-container">
+            <h3><i class="fas fa-chart-line" style="margin-right: 8px;"></i> Heart Rate Trend (Last 4 days)</h3>
+            <canvas id="heartRateChart" width="400" height="200" style="max-width:100%; height:auto;"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3><i class="fas fa-chart-simple"></i> Blood Pressure Trend (Systolic / Diastolic)</h3>
+            <canvas id="bpChart" width="400" height="200" style="max-width:100%; height:auto;"></canvas>
+        </div>
+    </section>
+
+    <!-- Alerts section -->
+    <section class="alerts" id="alertsSection">
+        <h3><i class="fas fa-exclamation-triangle" style="color:#e67e22;"></i> Alerts & Notifications</h3>
+        <ul id="alertsList">
+            <li><i class="fas fa-arrow-up"></i> ⚠️ Blood Pressure slightly high (125/82) on 16 Nov 2025 — monitor regularly</li>
+            <li><i class="fas fa-heart-broken"></i> ⚠️ Heart rate irregular spike (85 BPM) on 16 Nov 2025 — check activity level</li>
+        </ul>
+    </section>
+
+    <!-- Recent health records -->
+    <section class="history">
+        <h3><i class="fas fa-history"></i> Recent Health Records</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heart Rate (BPM)</th>
+                        <th>Blood Pressure (mmHg)</th>
+                        <th>Blood Sugar (mg/dL)</th>
+                        <th>Temp (°C)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>17 Nov 2025</td><td>78</td><td>120/80</td><td>95</td><td>36.8</td></tr>
+                    <tr><td>16 Nov 2025</td><td>85</td><td>125/82</td><td>98</td><td>37.0</td></tr>
+                    <tr><td>15 Nov 2025</td><td>72</td><td>118/78</td><td>92</td><td>36.7</td></tr>
+                    <tr><td>14 Nov 2025</td><td>75</td><td>118/78</td><td>93</td><td>36.6</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Health tips -->
+    <section class="tips">
+        <h3><i class="fas fa-leaf"></i> Daily Wellness Tips</h3>
+        <ul>
+            <li><i class="fas fa-tint"></i> Drink at least 2L of water daily</li>
+            <li><i class="fas fa-walking"></i> 30 mins of moderate exercise</li>
+            <li><i class="fas fa-apple-alt"></i> Balanced diet with greens & protein</li>
+            <li><i class="fas fa-stethoscope"></i> Regular checkups every 6 months</li>
+            <li><i class="fas fa-moon"></i> 7-8 hrs quality sleep</li>
+        </ul>
+    </section>
+</div>
+
+<script>
+    // Load user data from localStorage (saved by registration.html)
+    function loadUserData() {
+        const userDataStr = localStorage.getItem('healthUser');
+        const greetingEl = document.getElementById('greeting');
+        
+        if (userDataStr) {
+            try {
+                const user = JSON.parse(userDataStr);
+                const firstName = user.firstName || '';
+                const lastName = user.lastName || '';
+                const fullName = firstName + ' ' + lastName;
+                
+                if (fullName.trim()) {
+                    greetingEl.innerHTML = `<i class="fas fa-waveform" style="color:#2c8faa; margin-right: 12px;"></i> Welcome, ${fullName}`;
+                } else {
+                    greetingEl.innerHTML = `<i class="fas fa-waveform" style="color:#2c8faa; margin-right: 12px;"></i> Welcome, Health User`;
+                }
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+            }
+        }
+    }
+    
+    // Initialize Charts
+    (function() {
+        // Heart Rate Chart
+        const heartCtx = document.getElementById('heartRateChart').getContext('2d');
+        if (window.heartChartInstance) window.heartChartInstance.destroy();
+        window.heartChartInstance = new Chart(heartCtx, {
+            type: 'line',
+            data: {
+                labels: ['14 Nov', '15 Nov', '16 Nov', '17 Nov'],
+                datasets: [{
+                    label: 'Heart Rate (BPM)',
+                    data: [75, 72, 85, 78],
+                    borderColor: '#e25c5c',
+                    backgroundColor: 'rgba(226, 92, 92, 0.08)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#c73d3d',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: { backgroundColor: '#1e3c4c', titleColor: '#f0f4f8' },
+                    legend: { position: 'top', labels: { font: { weight: 'bold' } } }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: false, 
+                        min: 50, 
+                        title: { display: true, text: 'Beats per minute', color: '#346f86' },
+                        grid: { color: '#e9ecef' }
+                    },
+                    x: { title: { display: true, text: 'Date', color: '#346f86' } }
+                }
+            }
+        });
+
+        // Blood Pressure Chart
+        const bpCtx = document.getElementById('bpChart').getContext('2d');
+        if (window.bpChartInstance) window.bpChartInstance.destroy();
+        window.bpChartInstance = new Chart(bpCtx, {
+            type: 'bar',
+            data: {
+                labels: ['14 Nov', '15 Nov', '16 Nov', '17 Nov'],
+                datasets: [
+                    {
+                        label: 'Systolic (mmHg)',
+                        data: [118, 120, 125, 120],
+                        backgroundColor: '#427d9d',
+                        borderRadius: 8,
+                        barPercentage: 0.65,
+                        categoryPercentage: 0.8
+                    },
+                    {
+                        label: 'Diastolic (mmHg)',
+                        data: [78, 78, 82, 80],
+                        backgroundColor: '#6abf8d',
+                        borderRadius: 8,
+                        barPercentage: 0.65
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw} mmHg` } },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        title: { display: true, text: 'Blood Pressure (mmHg)', color: '#346f86' },
+                        grid: { color: '#e2e8f0' }
+                    },
+                    x: { title: { display: true, text: 'Date', color: '#346f86' } }
+                }
+            }
+        });
+    })();
+    
+    // Update alert count
+    const alertsList = document.querySelectorAll('#alertsList li');
+    const alertCountSpan = document.getElementById('alertCount');
+    if (alertCountSpan && alertsList) {
+        alertCountSpan.innerText = alertsList.length;
+    }
+    
+    // Load user data when page loads
+    document.addEventListener('DOMContentLoaded', loadUserData);
+</script>
+</body>
+</html>
